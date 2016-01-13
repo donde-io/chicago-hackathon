@@ -1,7 +1,10 @@
 var offices = [
     {
-        "name":"Chicago office",
-        "Location" : {
+        "type": "Feature",
+        "properties": {
+            "name": "Chicago office"
+        },
+        "geometry" : {
             "type" : "Point",
             "coordinates" : [
                 -87.636692,
@@ -10,8 +13,11 @@ var offices = [
         }
     },
     {
-        "name":"Vancouver office",
-        "Location" : {
+        "type": "Feature",
+        "properties": {
+            "name": "Vancouver office"
+        },
+        "geometry" : {
             "type" : "Point",
             "coordinates" : [
                 -123.119164,
@@ -20,8 +26,11 @@ var offices = [
         }
     },
     {
-        "name":"Toronto office",
-        "Location" : {
+        "type": "Feature",
+        "properties": {
+            "name": "Toronto office"
+        },
+        "geometry" : {
             "type" : "Point",
             "coordinates" : [
                 -79.413799,
@@ -30,8 +39,11 @@ var offices = [
         }
     },
     {
-        "name":"Reading office",
-        "Location" : {
+        "type": "Feature",
+        "properties": {
+            "name": "Reading office"
+        },
+        "geometry" : {
             "type" : "Point",
             "coordinates" : [
                 -0.980600,
@@ -40,14 +52,16 @@ var offices = [
         }
     },
     {
-        "name":"Kiev office",
-        "Location" : {
+        "type": "Feature",
+        "properties": {
+            "name": "Kiev office"
+        },
+        "geometry" : {
             "type" : "Point",
             "coordinates" : [
                 30.469488,
                 50.439322
             ]
         }
-    },
-
+    }
 ]
