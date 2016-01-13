@@ -2,7 +2,8 @@ var offices = [
     {
         "type": "Feature",
         "properties": {
-            "name": "Chicago office"
+            "name": "Chicago office",
+            "img": "images/rob.png"
         },
         "geometry" : {
             "type" : "Point",
@@ -15,7 +16,8 @@ var offices = [
     {
         "type": "Feature",
         "properties": {
-            "name": "Vancouver office"
+            "name": "Vancouver office",
+            "img":"images/yvr_office.jpg"
         },
         "geometry" : {
             "type" : "Point",
@@ -28,7 +30,8 @@ var offices = [
     {
         "type": "Feature",
         "properties": {
-            "name": "Toronto office"
+            "name": "Toronto office",
+            "img": "images/trnto_office.jpg"
         },
         "geometry" : {
             "type" : "Point",
@@ -41,7 +44,8 @@ var offices = [
     {
         "type": "Feature",
         "properties": {
-            "name": "Reading office"
+            "name": "Reading office",
+            "img": "images/uk_office.jpg"
         },
         "geometry" : {
             "type" : "Point",
@@ -54,7 +58,8 @@ var offices = [
     {
         "type": "Feature",
         "properties": {
-            "name": "Kiev office"
+            "name": "Kiev office",
+            "img": "images/kiev_office.jpg"
         },
         "geometry" : {
             "type" : "Point",
