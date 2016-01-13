@@ -2,7 +2,7 @@ var gulp = require('gulp');
 var webserver = require('gulp-webserver');
 var browserSync = require('browser-sync');
 
-gulp.task('webserver', function() {
+gulp.task('server', function() {
     browserSync.init({
         proxy: "localhost:8000"
     });
@@ -18,8 +18,4 @@ gulp.task('webserver', function() {
 
 });
 
-//gulp.task('browser-sync', function() {
-//    browserSync.init({
-//        proxy: "192.168.33.21"
-//    });
-//});
+gulp.task('default',['server']);
