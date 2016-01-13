@@ -1,0 +1,13 @@
+{
+  "name": "Chicago-hackathon",
+  "version": "0.1.0",
+  "dependencies": {
+    "browser-sync": "2.8.2",
+    "gulp": "3.9.0",
+    "gulp-webserver": "0.9.1"
+  },
+  "engines": {
+    "node": "0.12.x",
+    "npm": "2.10.x"
+  }
+}
