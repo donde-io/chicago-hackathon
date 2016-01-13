@@ -85,7 +85,7 @@ for(var i=1;i<offices.length;i++){
 }
 
 //calculating the scale
-var max_distance = Math.max(offices.map(function(office){
+var max_distance = Math.max.apply(null, offices.map(function(office){
     return office["properties"]["distance"];
 }));
 for(var i=1;i<offices.length;i++){
