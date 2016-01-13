@@ -25,6 +25,7 @@
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Turf.js/2.0.2/turf.min.js"></script>
     <script src="./js/three.min.js"></script>
+    <script src="./js/font.typeface.js"></script>
     <script src="./js/StereoEffect.js"></script>
     <script src="./js/DeviceOrientationControls.js"></script>
     <script src="./js/OrbitControls.js"></script>
@@ -168,6 +169,7 @@
       	// scene.add( skyBox );
 
         function addOfficeImage(compassBearing, officeList){
+
             var compassBearing = compassBearing || 0;
             var y = 100;
             var scaleUpMagnification = 400;
@@ -188,11 +190,46 @@
                     map:THREE.ImageUtils.loadTexture(offices[i].properties.img)
                 });
 
-                // officeImage.map.needsUpdate = true; //ADDED
-                // plane
                 var vrImage = new THREE.Mesh(new THREE.BoxGeometry(50, 50, 50),officeImage);
                 vrImage.position.set(x, y, z);
                 scene.add(vrImage);
+
+                // adding disctance text to locations
+                var officeDistance = offices[i].properties.distance;
+
+                var materialFront = new THREE.MeshBasicMaterial({
+                    color: 0xff0000
+                });
+                var materialSide = new THREE.MeshBasicMaterial({
+                    color: 0x000088
+                });
+                var materialArray = [materialFront, materialSide];
+                var textGeom = new THREE.TextGeometry(officeDistance, {
+                    size: 12,
+                    height: 4,
+                    curveSegments: 3,
+                    font: 'janda manatee solid',
+                    weight: "normal",
+                    style: "normal",
+                    bevelThickness: 1,
+                    bevelSize: 2,
+                    bevelEnabled: true,
+                    material: 0,
+                    extrudeMaterial: 1
+                });
+
+                var textMaterial = new THREE.MeshFaceMaterial(materialArray);
+                var textMesh = new THREE.Mesh(textGeom, textMaterial);
+
+                textGeom.computeBoundingBox();
+                var textWidth = textGeom.boundingBox.max.x - textGeom.boundingBox.min.x;
+
+                textMesh.position.set(-0.5 * textWidth, 50, z);
+                textMesh.rotation.x = 0;
+                textMesh.rotation.y = -180;
+                textMesh.rotation.z = 0;
+
+                scene.add( textMesh );
             }
         }
 
