@@ -18,6 +18,8 @@
 
     <script>
 
+        var userCompass = null;
+
         window.addEventListener('load', function() {
 
             var doSomethingWithBearing = function(bearing){
@@ -25,9 +27,13 @@
                 document.getElementById('headingReading').innerHTML = bearing;
             };
 
-            new Compass(doSomethingWithBearing);
+            userCompass = new Compass(doSomethingWithBearing);
 
         }, true);
+
+        setTimeout(function() {
+            alert(userCompass.bearing);
+        },5000);
 
     </script>
 </head>

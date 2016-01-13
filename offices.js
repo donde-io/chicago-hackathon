@@ -73,22 +73,29 @@ window.offices = [
     }
 ];
 
-for(var i=1;i<offices.length;i++){
-    offices[i]["properties"]["bearing"] = turf.bearing(offices[0], offices[i]);
-    offices[i]["properties"]["distance"] = turf.distance(offices[0], offices[i]);
+function enrichOffices(){
+    for(var i=0;i<offices.length;i++){
+        offices[i]["properties"]["bearing"] = turf.bearing(user_location, offices[i]);
+        offices[i]["properties"]["distance"] = turf.distance(user_location, offices[i]);
 
-    //bearing = 90 - (180/pi)*atan2(y2-y1, x2-x1)
-    offices[i]["properties"]["flat_bearing"] = 90 - (180/Math.PI)*Math.atan2(offices[i]["geometry"]["coordinates"][1] - offices[0]["geometry"]["coordinates"][1], offices[i]["geometry"]["coordinates"][0] - offices[0]["geometry"]["coordinates"][0])
+        //bearing = 90 - (180/pi)*atan2(y2-y1, x2-x1)
+        offices[i]["properties"]["flat_bearing"] = 90 - (180/Math.PI)*Math.atan2(offices[i]["geometry"]["coordinates"][1] - user_location["geometry"]["coordinates"][1], offices[i]["geometry"]["coordinates"][0] - user_location["geometry"]["coordinates"][0])
 
-    console.log("Bearing Chicago - "+offices[i]["properties"]["name"]+" : "+offices[i]["properties"]["bearing"]);
+        console.log("Bearing Chicago - "+offices[i]["properties"]["name"]+" : "+offices[i]["properties"]["bearing"]);
 
-    console.log("Flat Bearing Chicago - "+offices[i]["properties"]["name"]+" : "+offices[i]["properties"]["flat_bearing"]);
-}
+        console.log("Flat Bearing Chicago - "+offices[i]["properties"]["name"]+" : "+offices[i]["properties"]["flat_bearing"]);
+    }
 
-//calculating the scale
-var max_distance = Math.max.apply(null, offices.map(function(office){
-    return office["properties"]["distance"];
-}));
-for(var i=1;i<offices.length;i++){
-    offices[i]["properties"]["scale"] = offices[i]["properties"]["distance"]/max_distance;
+    //calculating the scale
+    var max_distance = Math.max.apply(null, offices.map(function(office){
+        return office["properties"]["distance"];
+    }));
+    for(var i=1;i<offices.length;i++){
+        offices[i]["properties"]["scale"] = offices[i]["properties"]["distance"]/max_distance;
+    }
+
+    //removing locations which are too close for better display
+    offices = offices.filter(function(office){
+        return office["properties"]["distance"] > 100;
+    });
 }
