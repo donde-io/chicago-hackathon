@@ -199,10 +199,10 @@
                 var officeDistance = Math.floor(offices[i].properties.distance) + " km";
 
                 var materialFront = new THREE.MeshBasicMaterial({
-                    color: 0xff0000
+                    color: 0xffffff
                 });
                 var materialSide = new THREE.MeshBasicMaterial({
-                    color: 0x000088
+                    color: 0x000000
                 });
                 var materialArray = [materialFront, materialSide];
                 var textGeom = new THREE.TextGeometry(officeDistance, {
@@ -227,7 +227,12 @@
 
                 textMesh.position.set(-0.05 * textWidth, y+30, z);
                 textMesh.rotation.x = 0;
-                textMesh.rotation.y = -160;
+                if (z <= 0 ){
+                  textMesh.rotation.y = 0;
+                }
+                else{
+                  textMesh.rotation.y = -160;
+                }
                 textMesh.rotation.z = 0;
 
                 scene.add( textMesh );
