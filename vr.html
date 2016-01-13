@@ -194,7 +194,7 @@
                     map:THREE.ImageUtils.loadTexture(offices[i].properties.img)
                 });
 
-                var vrImage = new THREE.Mesh(new THREE.BoxGeometry(50, 50, 50),officeImage);
+                var vrImage = new THREE.Mesh(new THREE.BoxGeometry(50, 50, 0),officeImage);
                 vrImage.position.set(x, y, z);
                 scene.add(vrImage);
 
