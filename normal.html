@@ -45,6 +45,7 @@
         scene.add(camera);
 
         renderer = new THREE.WebGLRenderer();
+        renderer.setClearColor( 0xE0EFF1 );
         element = renderer.domElement;
         container = document.getElementById('webglviewer');
         container.appendChild(element);
@@ -79,13 +80,9 @@
         window.addEventListener('deviceorientation', setOrientationControls, true);
 
         // Lighting
-        var light = new THREE.PointLight(0x999999, 2, 100);
-        light.position.set(50, 50, 50);
-        scene.add(light);
-
-        var lightScene = new THREE.PointLight(0x999999, 2, 100);
-        lightScene.position.set(0, 5, 0);
-        scene.add(lightScene);
+        var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.8 );
+        directionalLight.position.set( 0, 1, 0 );
+        scene.add( directionalLight );
 
         var floorTexture = THREE.ImageUtils.loadTexture('textures/wood.jpg');
         floorTexture.wrapS = THREE.RepeatWrapping;
