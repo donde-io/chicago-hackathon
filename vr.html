@@ -105,29 +105,27 @@
         scene.add(floor);
 
         function addOfficeImage(compassBearing, officeList){
-          var x = 0
-          var y = 30
-          var z = 0
-          for (i = 0; i < officeList.length; i++) {
-            x += 60
-            z += 60
-              officeImage = new THREE.MeshBasicMaterial({ //CHANGED to MeshBasicMaterial
+          var x = 0;
+          var y = 30;
+          var z = 0;
+          for (var i = 0; i < officeList.length; i++) {
+            x += 60;
+            z += 60;
+            var officeImage = new THREE.MeshBasicMaterial({ //CHANGED to MeshBasicMaterial
                 map:THREE.ImageUtils.loadTexture(offices[i].properties.img)
-              });
+            });
 
-              // officeImage.map.needsUpdate = true; //ADDED
-              // plane
-              vrImage = new THREE.Mesh(new THREE.BoxGeometry(50, 50, 50),officeImage);
-              vrImage.position.set(x, y, z);
-              scene.add(vrImage);
+            // officeImage.map.needsUpdate = true; //ADDED
+            // plane
+            var vrImage = new THREE.Mesh(new THREE.BoxGeometry(50, 50, 50),officeImage);
+            vrImage.position.set(x, y, z);
+            scene.add(vrImage);
           }
         }
-// todo insert compassBearing
+
+        // todo insert compassBearing
         addOfficeImage(null, offices);
-
-
         clock = new THREE.Clock();
-
         animate();
       }
 
