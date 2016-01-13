@@ -108,6 +108,19 @@
         floor.rotation.x = -Math.PI / 2;
         scene.add(floor);
 
+        var robImg = new THREE.MeshBasicMaterial({ //CHANGED to MeshBasicMaterial
+            map:THREE.ImageUtils.loadTexture('images/rob.png')
+        });
+        robImg.map.needsUpdate = true; //ADDED
+
+        // plane
+        var rob = new THREE.Mesh(new THREE.PlaneGeometry(30, 30),robImg);
+        rob.overdraw = true;
+        rob.position.x = 20 ;
+        rob.position.y = 15 ;
+        rob.position.z = -40 ;
+        scene.add(rob);
+
         clock = new THREE.Clock();
 
         animate();
