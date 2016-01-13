@@ -3,7 +3,7 @@ window.offices = [
         "type": "Feature",
         "properties": {
             "name": "Chicago office",
-            "img": "images/rob.png",
+            "img": "images/mcheng-slack.png",
             "y-allowance": 100
         },
         "geometry" : {
