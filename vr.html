@@ -40,22 +40,34 @@
           controls,
           clock;
 
-      var user_lat, user_lng = null;
+      var user_location = {
+          "type": "Feature",
+          "properties": {
+              "name": "User location",
+          },
+          "geometry" : {
+              "type" : "Point",
+              "coordinates" : [
+                  -87.636692,
+                  41.894551
+              ]
+          }
+      };
       navigator.geolocation.getCurrentPosition(
           function(position) {
-            user_lat = position.coords.latitude;
-            user_lng = position.coords.longitude;
+            user_location["geometry"]["coordinates"][1] = position.coords.latitude;
+              user_location["geometry"]["coordinates"][0] = position.coords.longitude;
             init();
           },
           function(error) {
             console.error("location not found, defaulting to Chicago");
-              user_lat = 41.894551;
-              user_lng = -87.636692;
             init();
           }
       );
 
       function init() {
+          enrichOffices();
+
         scene = new THREE.Scene();
         camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.1, 20000);
         scene.add(camera);
@@ -141,7 +153,7 @@
             var y = 100;
             var scaleUpMagnification = 400;
 
-            for (var i = 1; i < officeList.length; i++) {
+            for (var i = 0; i < officeList.length; i++) {
                 console.log(officeList[i]["properties"]["scale"]);
                 var scaleUp = scaleUpMagnification * officeList[i]["properties"]["scale"];
                 var theta = compassBearing + officeList[i]["properties"]["flat_bearing"];
