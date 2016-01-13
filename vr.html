@@ -42,7 +42,7 @@
       function init() {
         scene = new THREE.Scene();
         camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.001, 700);
-        camera.position.set(0, 15, 0);
+        camera.position.set(70, 125, 0);
         scene.add(camera);
 
         renderer = new THREE.WebGLRenderer();
@@ -104,16 +104,27 @@
         floor.rotation.x = -Math.PI / 2;
         scene.add(floor);
 
-        var robImg = new THREE.MeshBasicMaterial({ //CHANGED to MeshBasicMaterial
-            map:THREE.ImageUtils.loadTexture(offices[1].properties.img)
-        });
-        robImg.map.needsUpdate = true; //ADDED
-        // debugger
-        // plane
-        var rob = new THREE.Mesh(new THREE.CubeGeometry(10, 50, 50),robImg);
-        rob.position.set(70, 15, 40)
-        rob.rotation.y = 3
-        scene.add(rob);
+        function addOfficeImage(compassBearing, officeList){
+          var x = 0
+          var y = 30
+          var z = 0
+          for (i = 0; i < officeList.length; i++) {
+            x += 60
+            z += 60
+              officeImage = new THREE.MeshBasicMaterial({ //CHANGED to MeshBasicMaterial
+                map:THREE.ImageUtils.loadTexture(offices[i].properties.img)
+              });
+
+              // officeImage.map.needsUpdate = true; //ADDED
+              // plane
+              vrImage = new THREE.Mesh(new THREE.BoxGeometry(50, 50, 50),officeImage);
+              vrImage.position.set(x, y, z);
+              scene.add(vrImage);
+          }
+        }
+// todo insert compassBearing
+        addOfficeImage(null, offices);
+
 
         clock = new THREE.Clock();
 
