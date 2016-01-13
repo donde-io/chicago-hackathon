@@ -20,12 +20,14 @@
   </head>
   <body>
     <div id="webglviewer"></div>
+    <script>
+        window.console.warn = function(){};
+    </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Turf.js/2.0.2/turf.min.js"></script>
     <script src="./js/three.min.js"></script>
     <script src="./js/font.typeface.js"></script>
     <script src="./js/StereoEffect.js"></script>
     <script src="./js/DeviceOrientationControls.js"></script>
-    <script src="./js/threex.text.js"></script>
     <script src="./js/OrbitControls.js"></script>
     <script src="./offices.js"></script>
 
@@ -39,13 +41,27 @@
           controls,
           clock;
 
-      init();
+      var user_lat, user_lng = null;
+      navigator.geolocation.getCurrentPosition(
+          function(position) {
+            user_lat = position.coords.latitude;
+            user_lng = position.coords.longitude;
+            init();
+          },
+          function(error) {
+            console.error("location not found, defaulting to Chicago");
+              user_lat = 41.894551;
+              user_lng = -87.636692;
+            init();
+          }
+      );
 
       function init() {
         scene = new THREE.Scene();
-        camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.001, 700);
-        camera.position.set(70, 125, 0);
+        camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.1, 20000);
         scene.add(camera);
+        camera.position.set(0,150,0);
+        camera.lookAt(scene.position);
 
         renderer = new THREE.WebGLRenderer();
         renderer.setClearColor( 0xE0EFF1 );
@@ -106,58 +122,84 @@
         floor.rotation.x = -Math.PI / 2;
         scene.add(floor);
 
+      	// var imagePrefix = "images/dawnmountain-";
+      	// var directions  = ["xpos", "xneg", "ypos", "yneg", "zpos", "zneg"];
+      	// var imageSuffix = ".png";
+      	// var skyGeometry = new THREE.CubeGeometry( 5000, 5000, 5000 );
+        //
+      	// var materialArray = [];
+      	// for (var i = 0; i < 6; i++)
+      	// 	materialArray.push( new THREE.MeshBasicMaterial({
+      	// 		map: THREE.ImageUtils.loadTexture( imagePrefix + directions[i] + imageSuffix ),
+      	// 		side: THREE.BackSide
+      	// 	}));
+      	// var skyMaterial = new THREE.MeshFaceMaterial( materialArray );
+      	// var skyBox = new THREE.Mesh( skyGeometry, skyMaterial );
+      	// scene.add( skyBox );
+
         function addOfficeImage(compassBearing, officeList){
-          var x = 0;
-          var y = 30;
-          var z = 0;
-          for (var i = 0; i < officeList.length; i++) {
-            x += 60;
-            z += 60;
-            var officeImage = new THREE.MeshBasicMaterial({ //CHANGED to MeshBasicMaterial
-                map:THREE.ImageUtils.loadTexture(offices[i].properties.img)
-            });
 
-            // officeImage.map.needsUpdate = true; //ADDED
-            // plane
-            var vrImage = new THREE.Mesh(new THREE.BoxGeometry(50, 50, 50),officeImage);
-            vrImage.position.set(x, y, z);
-            scene.add(vrImage);
-            var officeDistance = offices[i].properties.distance;
+            var compassBearing = compassBearing || 0;
+            var y = 100;
+            var scaleUpMagnification = 400;
 
-            var materialFront = new THREE.MeshBasicMaterial({
-                color: 0xff0000
-            });
-            var materialSide = new THREE.MeshBasicMaterial({
-                color: 0x000088
-            });
-            var materialArray = [materialFront, materialSide];
-            var textGeom = new THREE.TextGeometry(officeDistance, {
-                size: 12,
-                height: 4,
-                curveSegments: 3,
-                font: 'janda manatee solid',
-                weight: "normal",
-                style: "normal",
-                bevelThickness: 1,
-                bevelSize: 2,
-                bevelEnabled: true,
-                material: 0,
-                extrudeMaterial: 1
-            });
+            for (var i = 1; i < officeList.length; i++) {
+                console.log(officeList[i]["properties"]["scale"]);
+                var scaleUp = scaleUpMagnification * officeList[i]["properties"]["scale"];
+                var theta = compassBearing + officeList[i]["properties"]["flat_bearing"];
+                var z = scaleUp * Math.sin(theta * Math.PI/180);
+                var x = scaleUp * Math.cos(theta * Math.PI/180);
 
-            var textMaterial = new THREE.MeshFaceMaterial(materialArray);
-            var textMesh = new THREE.Mesh(textGeom, textMaterial);
+                if(officeList[i]["properties"]["y-allowance"]){
+                    y +=  officeList[i]["properties"]["y-allowance"];
+                }
 
-            textGeom.computeBoundingBox();
-            var textWidth = textGeom.boundingBox.max.x - textGeom.boundingBox.min.x;
+                console.log(x,y,z);
+                var officeImage = new THREE.MeshBasicMaterial({ //CHANGED to MeshBasicMaterial
+                    map:THREE.ImageUtils.loadTexture(offices[i].properties.img)
+                });
 
-            textMesh.position.set(-0.5 * textWidth, 50, z);
-            textMesh.rotation.x = 0;
-            textMesh.rotation.y = -180;
-            textMesh.rotation.z = 0;
+                var vrImage = new THREE.Mesh(new THREE.BoxGeometry(50, 50, 50),officeImage);
+                vrImage.position.set(x, y, z);
+                scene.add(vrImage);
 
-            scene.add( textMesh );
-          }
+                // adding disctance text to locations
+                var officeDistance = offices[i].properties.distance;
+
+                var materialFront = new THREE.MeshBasicMaterial({
+                    color: 0xff0000
+                });
+                var materialSide = new THREE.MeshBasicMaterial({
+                    color: 0x000088
+                });
+                var materialArray = [materialFront, materialSide];
+                var textGeom = new THREE.TextGeometry(officeDistance, {
+                    size: 12,
+                    height: 4,
+                    curveSegments: 3,
+                    font: 'janda manatee solid',
+                    weight: "normal",
+                    style: "normal",
+                    bevelThickness: 1,
+                    bevelSize: 2,
+                    bevelEnabled: true,
+                    material: 0,
+                    extrudeMaterial: 1
+                });
+
+                var textMaterial = new THREE.MeshFaceMaterial(materialArray);
+                var textMesh = new THREE.Mesh(textGeom, textMaterial);
+
+                textGeom.computeBoundingBox();
+                var textWidth = textGeom.boundingBox.max.x - textGeom.boundingBox.min.x;
+
+                textMesh.position.set(-0.5 * textWidth, 50, z);
+                textMesh.rotation.x = 0;
+                textMesh.rotation.y = -180;
+                textMesh.rotation.z = 0;
+
+                scene.add( textMesh );
+            }
         }
 
         // todo insert compassBearing

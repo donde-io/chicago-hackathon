@@ -398,7 +398,10 @@
                 this.compass.headingElement.textContent = thisCompassHeading;
                 this.lastCompassHeading = thisCompassHeading;
                 // Display compass heading
-                if(this.compass.callback) this.compass.callback(thisCompassHeading);
+                if(this.compass.callback) {
+                    this.compass.callback(thisCompassHeading);
+                }
+                this.compass.bearing = thisCompassHeading;
             }
             //document.getElementById('headingReading').innerHTML = Math.floor((Math.random() * 100) + 1);
 
