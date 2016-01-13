@@ -25,6 +25,7 @@
     <script src="./js/StereoEffect.js"></script>
     <script src="./js/DeviceOrientationControls.js"></script>
     <script src="./js/OrbitControls.js"></script>
+    <script src="./offices.js"></script>
 
     <script>
       var scene,
@@ -104,16 +105,14 @@
         scene.add(floor);
 
         var robImg = new THREE.MeshBasicMaterial({ //CHANGED to MeshBasicMaterial
-            map:THREE.ImageUtils.loadTexture('images/rob.png')
+            map:THREE.ImageUtils.loadTexture(offices[1].properties.img)
         });
         robImg.map.needsUpdate = true; //ADDED
-
+        // debugger
         // plane
-        var rob = new THREE.Mesh(new THREE.PlaneGeometry(30, 30),robImg);
-        rob.overdraw = true;
-        rob.position.x = 20 ;
-        rob.position.y = 15 ;
-        rob.position.z = -40 ;
+        var rob = new THREE.Mesh(new THREE.CubeGeometry(10, 50, 50),robImg);
+        rob.position.set(70, 15, 40)
+        rob.rotation.y = 3
         scene.add(rob);
 
         clock = new THREE.Clock();
