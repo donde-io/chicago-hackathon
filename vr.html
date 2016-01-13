@@ -37,7 +37,20 @@
           controls,
           clock;
 
-      init();
+      var user_lat, user_lng = null;
+      navigator.geolocation.getCurrentPosition(
+          function(position) {
+            user_lat = position.coords.latitude;
+            user_lng = position.coords.longitude;
+            init();
+          },
+          function(error) {
+            console.error("location not found, defaulting to Chicago");
+              user_lat = 41.894551;
+              user_lng = -87.636692;
+            init();
+          }
+      );
 
       function init() {
         scene = new THREE.Scene();
