@@ -228,12 +228,13 @@
                 textGeom.computeBoundingBox();
                 var textWidth = textGeom.boundingBox.max.x - textGeom.boundingBox.min.x;
 
-                textMesh.position.set(-0.05 * textWidth, y+30, z);
                 textMesh.rotation.x = 0;
                 if (z <= 0 ){
+                  textMesh.position.set(x, y+30, z);
                   textMesh.rotation.y = 0;
                 }
                 else{
+                  textMesh.position.set(-0.05 * textWidth, y+30, z);
                   textMesh.rotation.y = -160;
                 }
                 textMesh.rotation.z = 0;
