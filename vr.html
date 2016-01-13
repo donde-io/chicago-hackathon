@@ -171,13 +171,16 @@
         function addOfficeImage(compassBearing, officeList){
 
             var compassBearing = compassBearing || 0;
-            var y = 100;
+//            alert(compassBearing);
+
+
             var scaleUpMagnification = 400;
 
             for (var i = 0; i < officeList.length; i++) {
+                var y = 100;
                 console.log(officeList[i]["properties"]["scale"]);
                 var scaleUp = scaleUpMagnification * officeList[i]["properties"]["scale"];
-                var theta = compassBearing + officeList[i]["properties"]["flat_bearing"];
+                var theta = compassBearing + (officeList[i]["properties"]["flat_bearing"] + 360) % 360;
                 var z = scaleUp * Math.sin(theta * Math.PI/180);
                 var x = scaleUp * Math.cos(theta * Math.PI/180);
 

@@ -4,7 +4,7 @@ window.offices = [
         "properties": {
             "name": "Chicago office",
             "img": "images/rob.png",
-            "distance":0
+            "y-allowance": 100
         },
         "geometry" : {
             "type" : "Point",
@@ -46,7 +46,8 @@ window.offices = [
         "type": "Feature",
         "properties": {
             "name": "Reading office",
-            "img": "images/uk_office.jpg"
+            "img": "images/uk_office.jpg",
+            "y-allowance": 30
         },
         "geometry" : {
             "type" : "Point",
@@ -90,7 +91,7 @@ function enrichOffices(){
     var max_distance = Math.max.apply(null, offices.map(function(office){
         return office["properties"]["distance"];
     }));
-    for(var i=1;i<offices.length;i++){
+    for(var i=0;i<offices.length;i++){
         offices[i]["properties"]["scale"] = offices[i]["properties"]["distance"]/max_distance;
     }
 
@@ -98,4 +99,5 @@ function enrichOffices(){
     offices = offices.filter(function(office){
         return office["properties"]["distance"] > 100;
     });
+    console.log(offices);
 }
