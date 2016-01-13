@@ -30,6 +30,25 @@
     <script src="./js/OrbitControls.js"></script>
     <script src="./offices.js"></script>
 
+    <script type="text/javascript" src="js/gl-matrix.min.js"></script>
+    <script type="text/javascript" src="js/fulltilt.min.js"></script>
+    <script type="text/javascript" src="js/compass.js"></script>
+
+    <script>
+        var userCompass = null;
+
+        window.addEventListener('load', function() {
+
+            var doSomethingWithBearing = function(bearing){
+//                  var headingElement = document.getElementById('headingReading');
+//                  document.getElementById('headingReading').innerHTML = bearing;
+            };
+
+            userCompass = new Compass(doSomethingWithBearing);
+
+        }, true);
+    </script>
+
     <script>
       var scene,
           camera,
@@ -177,10 +196,19 @@
             }
         }
 
+
+          setTimeout(function() {
+              var bearing = userCompass.bearing || null;
+
+              addOfficeImage(bearing, offices);
+              clock = new THREE.Clock();
+              animate();
+          },5000);
+
         // todo insert compassBearing
-        addOfficeImage(null, offices);
-        clock = new THREE.Clock();
-        animate();
+//        addOfficeImage(null, offices);
+//        clock = new THREE.Clock();
+//        animate();
       }
 
       function animate() {
