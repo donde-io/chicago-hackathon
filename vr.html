@@ -16,9 +16,23 @@
         right: 0;
         top: 0;
       }
+      .spinner{
+        background-image: url("images/WWloader.gif");
+        background-position: top center;
+        background-size: cover;
+        display: inline-block;
+        height: 100vh;
+        position: absolute;
+        top: 0;
+        width: 50%;
+        z-index: 9999;
+      }
+      .spinner.two { left: 50%; }
     </style>
   </head>
   <body>
+    <div class="spinner"></div>
+    <div class="spinner two"></div>
     <div id="webglviewer"></div>
     <script>
         window.console.warn = function(){};
@@ -250,6 +264,8 @@
               addOfficeImage(bearing, offices);
               clock = new THREE.Clock();
               animate();
+              document.getElementsByClassName('spinner')[0].style.display = "none";
+              document.getElementsByClassName('spinner')[1].style.display = "none";
           },5000);
 
         // todo insert compassBearing
