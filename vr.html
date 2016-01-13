@@ -20,6 +20,9 @@
   </head>
   <body>
     <div id="webglviewer"></div>
+    <script>
+        window.console.warn = function(){};
+    </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Turf.js/2.0.2/turf.min.js"></script>
     <script src="./js/three.min.js"></script>
     <script src="./js/StereoEffect.js"></script>
@@ -121,22 +124,32 @@
       	// scene.add( skyBox );
 
         function addOfficeImage(compassBearing, officeList){
-          var x = 0;
-          var y = 30;
-          var z = 0;
-          for (var i = 0; i < officeList.length; i++) {
-            x += 60;
-            z += 60;
-            var officeImage = new THREE.MeshBasicMaterial({ //CHANGED to MeshBasicMaterial
-                map:THREE.ImageUtils.loadTexture(offices[i].properties.img)
-            });
+            var compassBearing = compassBearing || 0;
+            var y = 100;
+            var scaleUpMagnification = 400;
 
-            // officeImage.map.needsUpdate = true; //ADDED
-            // plane
-            var vrImage = new THREE.Mesh(new THREE.BoxGeometry(50, 50, 50),officeImage);
-            vrImage.position.set(x, y, z);
-            scene.add(vrImage);
-          }
+            for (var i = 1; i < officeList.length; i++) {
+                console.log(officeList[i]["properties"]["scale"]);
+                var scaleUp = scaleUpMagnification * officeList[i]["properties"]["scale"];
+                var theta = compassBearing + officeList[i]["properties"]["flat_bearing"];
+                var z = scaleUp * Math.sin(theta * Math.PI/180);
+                var x = scaleUp * Math.cos(theta * Math.PI/180);
+
+                if(officeList[i]["properties"]["y-allowance"]){
+                    y +=  officeList[i]["properties"]["y-allowance"];
+                }
+
+                console.log(x,y,z);
+                var officeImage = new THREE.MeshBasicMaterial({ //CHANGED to MeshBasicMaterial
+                    map:THREE.ImageUtils.loadTexture(offices[i].properties.img)
+                });
+
+                // officeImage.map.needsUpdate = true; //ADDED
+                // plane
+                var vrImage = new THREE.Mesh(new THREE.BoxGeometry(50, 50, 50),officeImage);
+                vrImage.position.set(x, y, z);
+                scene.add(vrImage);
+            }
         }
 
         // todo insert compassBearing

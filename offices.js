@@ -60,7 +60,8 @@ window.offices = [
         "type": "Feature",
         "properties": {
             "name": "Kiev office",
-            "img": "images/kiev_office.jpg"
+            "img": "images/kiev_office.jpg",
+            "y-allowance": 100
         },
         "geometry" : {
             "type" : "Point",
