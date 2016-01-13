@@ -3,7 +3,8 @@ window.offices = [
         "type": "Feature",
         "properties": {
             "name": "Chicago office",
-            "img": "images/rob.png"
+            "img": "images/rob.png",
+            "distance":0
         },
         "geometry" : {
             "type" : "Point",
@@ -81,4 +82,12 @@ for(var i=1;i<offices.length;i++){
     console.log("Bearing Chicago - "+offices[i]["properties"]["name"]+" : "+offices[i]["properties"]["bearing"]);
 
     console.log("Flat Bearing Chicago - "+offices[i]["properties"]["name"]+" : "+offices[i]["properties"]["flat_bearing"]);
+}
+
+//calculating the scale
+var max_distance = Math.max(offices.map(function(office){
+    return office["properties"]["distance"];
+}));
+for(var i=1;i<offices.length;i++){
+    offices[i]["properties"]["scale"] = offices[i]["properties"]["distance"]/max_distance;
 }
