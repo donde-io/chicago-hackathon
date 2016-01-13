@@ -50,7 +50,8 @@
         container = document.getElementById('webglviewer');
         container.appendChild(element);
 
-        effect = new THREE.StereoEffect(renderer);
+        // this line will render one view for non-cardboard view.
+        effect = new THREE.WebGLRenderer(renderer);
 
         // Our initial control fallback with mouse/touch events in case DeviceOrientation is not enabled
         controls = new THREE.OrbitControls(camera, element);
