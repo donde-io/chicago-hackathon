@@ -16,15 +16,52 @@
         right: 0;
         top: 0;
       }
+      .spinner{
+        background-image: url("images/WWloader.gif");
+        background-position: top center;
+        background-size: cover;
+        display: inline-block;
+        height: 100vh;
+        position: absolute;
+        top: 0;
+        width: 100%;
+        z-index: 9999;
+      }
+      .spinner.two { left: 50%; }
     </style>
   </head>
   <body>
+    <div class="spinner"></div>
     <div id="webglviewer"></div>
-
+    <script>
+        window.console.warn = function(){};
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Turf.js/2.0.2/turf.min.js"></script>
     <script src="./js/three.min.js"></script>
+    <script src="./js/font.typeface.js"></script>
     <script src="./js/StereoEffect.js"></script>
     <script src="./js/DeviceOrientationControls.js"></script>
     <script src="./js/OrbitControls.js"></script>
+    <script src="./offices.js"></script>
+
+    <script type="text/javascript" src="js/gl-matrix.min.js"></script>
+    <script type="text/javascript" src="js/fulltilt.min.js"></script>
+    <script type="text/javascript" src="js/compass.js"></script>
+
+    <script>
+        var userCompass = null;
+
+        window.addEventListener('load', function() {
+
+            var doSomethingWithBearing = function(bearing){
+//                  var headingElement = document.getElementById('headingReading');
+//                  document.getElementById('headingReading').innerHTML = bearing;
+            };
+
+            userCompass = new Compass(doSomethingWithBearing);
+
+        }, true);
+    </script>
 
     <script>
       var scene,
@@ -36,13 +73,39 @@
           controls,
           clock;
 
-      init();
+      var user_location = {
+          "type": "Feature",
+          "properties": {
+              "name": "User location",
+          },
+          "geometry" : {
+              "type" : "Point",
+              "coordinates" : [
+                  -87.636692,
+                  41.894551
+              ]
+          }
+      };
+      navigator.geolocation.getCurrentPosition(
+          function(position) {
+            user_location["geometry"]["coordinates"][1] = position.coords.latitude;
+              user_location["geometry"]["coordinates"][0] = position.coords.longitude;
+            init();
+          },
+          function(error) {
+            console.error("location not found, defaulting to Chicago");
+            init();
+          }
+      );
 
       function init() {
+          enrichOffices();
+
         scene = new THREE.Scene();
-        camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.001, 700);
-        camera.position.set(0, 15, 0);
+        camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.1, 20000);
         scene.add(camera);
+        camera.position.set(0,150,0);
+        camera.lookAt(scene.position);
 
         renderer = new THREE.WebGLRenderer();
         renderer.setClearColor( 0xE0EFF1 );
@@ -50,7 +113,6 @@
         container = document.getElementById('webglviewer');
         container.appendChild(element);
 
-        // this line will render one view for non-cardboard view.
         effect = new THREE.WebGLRenderer(renderer);
 
         // Our initial control fallback with mouse/touch events in case DeviceOrientation is not enabled
@@ -80,11 +142,11 @@
         window.addEventListener('deviceorientation', setOrientationControls, true);
 
         // Lighting
-        var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.8 );
+        var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.7 );
         directionalLight.position.set( 0, 1, 0 );
         scene.add( directionalLight );
 
-        var floorTexture = THREE.ImageUtils.loadTexture('textures/wood.jpg');
+        var floorTexture = THREE.ImageUtils.loadTexture('textures/grass.jpg');
         floorTexture.wrapS = THREE.RepeatWrapping;
         floorTexture.wrapT = THREE.RepeatWrapping;
         floorTexture.repeat = new THREE.Vector2(50, 50);
@@ -98,15 +160,115 @@
           map: floorTexture
         });
 
-        var geometry = new THREE.PlaneBufferGeometry(1000, 1000);
+        // this is how to make the floor bigger
+        var geometry = new THREE.PlaneBufferGeometry(5000, 5000);
 
         var floor = new THREE.Mesh(geometry, floorMaterial);
         floor.rotation.x = -Math.PI / 2;
         scene.add(floor);
 
-        clock = new THREE.Clock();
+      	// var imagePrefix = "images/dawnmountain-";
+      	// var directions  = ["xpos", "xneg", "ypos", "yneg", "zpos", "zneg"];
+      	// var imageSuffix = ".png";
+      	// var skyGeometry = new THREE.CubeGeometry( 5000, 5000, 5000 );
+        //
+      	// var materialArray = [];
+      	// for (var i = 0; i < 6; i++)
+      	// 	materialArray.push( new THREE.MeshBasicMaterial({
+      	// 		map: THREE.ImageUtils.loadTexture( imagePrefix + directions[i] + imageSuffix ),
+      	// 		side: THREE.BackSide
+      	// 	}));
+      	// var skyMaterial = new THREE.MeshFaceMaterial( materialArray );
+      	// var skyBox = new THREE.Mesh( skyGeometry, skyMaterial );
+      	// scene.add( skyBox );
 
-        animate();
+        function addOfficeImage(compassBearing, officeList){
+
+            var compassBearing = compassBearing || 0;
+//            alert(compassBearing);
+
+
+            var scaleUpMagnification = 400;
+
+            for (var i = 0; i < officeList.length; i++) {
+                var y = 100;
+                console.log(officeList[i]["properties"]["scale"]);
+                var scaleUp = scaleUpMagnification * officeList[i]["properties"]["scale"];
+                var theta = compassBearing + (officeList[i]["properties"]["flat_bearing"] + 360) % 360;
+                var z = scaleUp * Math.sin(theta * Math.PI/180);
+                var x = scaleUp * Math.cos(theta * Math.PI/180);
+
+                if(officeList[i]["properties"]["y-allowance"]){
+                    y +=  officeList[i]["properties"]["y-allowance"];
+                }
+
+                console.log(x,y,z);
+                var officeImage = new THREE.MeshBasicMaterial({ //CHANGED to MeshBasicMaterial
+                    map:THREE.ImageUtils.loadTexture(offices[i].properties.img)
+                });
+
+                var vrImage = new THREE.Mesh(new THREE.BoxGeometry(50, 50, 0),officeImage);
+                vrImage.position.set(x, y, z);
+                scene.add(vrImage);
+
+                // adding disctance text to locations
+                var officeDistance = Math.floor(offices[i].properties.distance) + " km";
+
+                var materialFront = new THREE.MeshBasicMaterial({
+                    color: 0xffffff
+                });
+                var materialSide = new THREE.MeshBasicMaterial({
+                    color: 0x000000
+                });
+                var materialArray = [materialFront, materialSide];
+                var textGeom = new THREE.TextGeometry(officeDistance, {
+                    size: 12,
+                    height: 4,
+                    curveSegments: 3,
+                    font: 'janda manatee solid',
+                    weight: "normal",
+                    style: "normal",
+                    bevelThickness: 1,
+                    bevelSize: 2,
+                    bevelEnabled: true,
+                    material: 0,
+                    extrudeMaterial: 1
+                });
+
+                var textMaterial = new THREE.MeshFaceMaterial(materialArray);
+                var textMesh = new THREE.Mesh(textGeom, textMaterial);
+
+                textGeom.computeBoundingBox();
+                var textWidth = textGeom.boundingBox.max.x - textGeom.boundingBox.min.x;
+                textMesh.position.set(x, y+30, z);
+
+                textMesh.rotation.x = 0;
+                if (z <= 0 ){
+                  textMesh.rotation.y = 0;
+                }
+                else{
+                  textMesh.rotation.y = -160;
+                }
+                textMesh.rotation.z = 0;
+
+                scene.add( textMesh );
+            }
+        }
+
+
+          setTimeout(function() {
+              var bearing = userCompass.bearing || null;
+
+              addOfficeImage(bearing, offices);
+              clock = new THREE.Clock();
+              animate();
+              document.getElementsByClassName('spinner')[0].style.display = "none";
+          },5000);
+
+        // todo insert compassBearing
+//        addOfficeImage(null, offices);
+//        clock = new THREE.Clock();
+//        animate();
       }
 
       function animate() {
